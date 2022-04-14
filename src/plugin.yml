@@ -1,0 +1,12 @@
+main: com.C200.MyFirstPlugin
+name: VeryFirstPlugins
+version: 1.0
+commands:
+  heal:
+    description: Heals the Player
+    usage: /heal
+    permission: HCFCore.Heal
+  feed:
+    description: Gives max hunger
+    usage: /feed
+    permission: HCFCore.Feed

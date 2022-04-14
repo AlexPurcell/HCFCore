@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="HCF Core:jar">
+    <output-path>$PROJECT_DIR$/../Minecraft Server/plugins</output-path>
+    <root id="archive" name="HCF Core.jar">
+      <element id="module-output" name="HCF Core" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
+    </root>
+  </artifact>
+</component>
