@@ -10,3 +10,15 @@ commands:
     description: Gives max hunger
     usage: /feed
     permission: HCFCore.Feed
+  gmc:
+    description: Sets the player's gamemode to CREATIVE.
+    usage: /gmc
+  gms:
+    description: Sets the player's gamemode to SURVIVAL.
+    usage: /gms
+  gma:
+    description:  Sets the player's gamemode to ADVENTURER.
+    usage: /gma
+  gmspec:
+    description: Sets the player's gamemode to SPECTATOR.
+    usage: /gmspec
