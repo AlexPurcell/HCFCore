@@ -1,5 +1,7 @@
 package commands;
 
+import com.lunarclient.bukkitapi.LunarClientAPI;
+import com.lunarclient.bukkitapi.nethandler.client.LCPacketTitle;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -19,6 +21,7 @@ public class gameMode implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("gmc")) {
             player.setGameMode(GameMode.CREATIVE);
             player.sendMessage(ChatColor.DARK_PURPLE + "[" + ChatColor.WHITE + "HCF" + ChatColor.DARK_PURPLE + "]" + " Gamemode has been updated to" + ChatColor.WHITE + " CREATIVE");
+            LunarClientAPI.getInstance().sendPacket(player, new LCPacketTitle("First", "Message", 3000, 1000, 1000));
             return true;
         }
         else if (command.getName().equalsIgnoreCase("gms")) {
@@ -40,6 +43,8 @@ public class gameMode implements CommandExecutor {
             player.sendMessage(ChatColor.RED + "Invalid operation!");
             return true;
         }
+
+
 
     }
 }
