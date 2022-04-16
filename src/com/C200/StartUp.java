@@ -24,8 +24,7 @@ public class StartUp extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        System.out.println("Shutting Down!!!!!!!");
-
+        System.out.println("Shutting Down!");
         }
 }
 
