@@ -7,8 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-public class HelloWorld implements Listener {
+public class EventHandle implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
@@ -29,5 +30,9 @@ public class HelloWorld implements Listener {
         }
     }
 
+    @EventHandler
+    public void customJoinMessage(PlayerJoinEvent event) {
+        event.setJoinMessage(ChatColor.DARK_PURPLE + "[" + ChatColor.WHITE + "+" + ChatColor.DARK_PURPLE + "] " + ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_PURPLE + " has joined the server!");
+    }
 
 }
