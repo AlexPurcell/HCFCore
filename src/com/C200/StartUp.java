@@ -6,14 +6,14 @@ import commands.gameMode;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MyFirstPlugin extends JavaPlugin {
+public class StartUp extends JavaPlugin {
 
     @Override
     public void onEnable() {
 
         System.out.println("Hello world!");
 
-        Bukkit.getPluginManager().registerEvents(new HelloWorld(), this);
+        Bukkit.getPluginManager().registerEvents(new EventHandle(), this);
         getCommand("heal").setExecutor(new Heal());
         getCommand("feed").setExecutor(new Feed());
         getCommand("gmc").setExecutor(new gameMode());
@@ -28,3 +28,5 @@ public class MyFirstPlugin extends JavaPlugin {
 
         }
 }
+
+// 12:20 ep 3!!!!!!!!!!!!!!!!!
