@@ -29,5 +29,6 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="bukkitapi" level="project" />
   </component>
 </module>
