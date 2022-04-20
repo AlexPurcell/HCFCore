@@ -1,5 +1,6 @@
 package com.C200;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.C200.commands.Feed;
 import com.C200.commands.Heal;
 import com.C200.commands.gameMode;
@@ -11,6 +12,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import ch.qos.logback.classic.Level;
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 import static java.lang.Thread.sleep;
@@ -33,20 +37,20 @@ public class StartUp extends JavaPlugin {
 
     @Override
     public void onEnable() {
-            System.out.println("Hello world!");
-            Bukkit.getPluginManager().registerEvents(new EventHandle(), this);
-            getCommand("feed").setExecutor(new Feed());
-            getCommand("heal").setExecutor(new Heal());
-            getCommand("gmc").setExecutor(new gameMode());
-            getCommand("gms").setExecutor(new gameMode());
-            getCommand("gma").setExecutor(new gameMode());
-            getCommand("gmspec").setExecutor(new gameMode());
-            doUpdates();
+        System.out.println("Hello world!");
+        Bukkit.getPluginManager().registerEvents(new EventHandle(), this);
+        getCommand("feed").setExecutor(new Feed());
+        getCommand("heal").setExecutor(new Heal());
+        getCommand("gmc").setExecutor(new gameMode());
+        getCommand("gms").setExecutor(new gameMode());
+        getCommand("gma").setExecutor(new gameMode());
+        getCommand("gmspec").setExecutor(new gameMode());
+        LoggerContext context = (LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory();
+        (context).getLogger("org.mongodb.driver").setLevel(Level.ERROR);
+        display();
 
 
-
-        }
-
+    }
 
     @Override
     public void onDisable() {
@@ -54,31 +58,23 @@ public class StartUp extends JavaPlugin {
     }
 
     public static String doUpdates() {
-
-
         Dotenv dotenv = Dotenv.configure()
                 .directory("C:\\Users\\alext\\IdeaProjects\\Core\\src\\main\\assets")
                 .filename(".env")
                 .load();
 
         System.out.println("doUpdates activated");
-        var uri = dotenv.get("MY_ENV_VAR1");
+        String uri = dotenv.get("MY_ENV_VAR1");
 
+        assert uri != null;
         MongoClient clientURI = MongoClients.create(uri);
-
-
         MongoDatabase db = clientURI.getDatabase("Core");
-
-
         MongoCollection<Document> col = db.getCollection("permissionsNode");
-
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor = col.watch().cursor();
+
         System.out.println("Watching stream");
-
         ChangeStreamDocument<Document> next = cursor.next();
-
         System.out.println("Database has been updated!");
-
         cursor.close();
 
         try {
