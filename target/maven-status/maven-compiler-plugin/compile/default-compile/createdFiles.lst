@@ -1,0 +1,5 @@
+com\C200\commands\gameMode.class
+com\C200\StartUp.class
+com\C200\EventHandle.class
+com\C200\commands\Feed.class
+com\C200\commands\Heal.class
