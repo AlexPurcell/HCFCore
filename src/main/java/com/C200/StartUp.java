@@ -73,12 +73,11 @@ public class StartUp extends JavaPlugin {
         MongoCollection<Document> col = db.getCollection("permissionsNode");
 
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor = col.watch().cursor();
-        System.out.println("Watching");
+        System.out.println("Watching stream");
 
         ChangeStreamDocument<Document> next = cursor.next();
-        System.out.println("Okay now!");
 
-        System.out.println(next);
+        System.out.println("Database has been updated!");
 
         cursor.close();
 
