@@ -5,10 +5,16 @@ import com.C200.commands.Feed;
 import com.C200.commands.Heal;
 import com.C200.commands.gameMode;
 import com.mongodb.client.*;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -17,7 +23,10 @@ import ch.qos.logback.classic.Level;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Filters.eq;
 import static java.lang.Thread.sleep;
+import static java.util.Collections.singletonList;
 
 public class StartUp extends JavaPlugin {
 
@@ -67,14 +76,18 @@ public class StartUp extends JavaPlugin {
         String uri = dotenv.get("MY_ENV_VAR1");
 
         assert uri != null;
+
         MongoClient clientURI = MongoClients.create(uri);
         MongoDatabase db = clientURI.getDatabase("Core");
         MongoCollection<Document> col = db.getCollection("permissionsNode");
+//        List<Bson> pipeline = singletonList(match(eq("operationType", "update")));
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor = col.watch().cursor();
 
         System.out.println("Watching stream");
         ChangeStreamDocument<Document> next = cursor.next();
-        System.out.println("Database has been updated!");
+        assert next.getUpdateDescription() != null;
+        System.out.println("Database has been updated! --> " + next.getUpdateDescription().getUpdatedFields());
+
         cursor.close();
 
         try {
