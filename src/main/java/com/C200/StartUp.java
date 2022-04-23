@@ -4,12 +4,17 @@ import ch.qos.logback.classic.LoggerContext;
 import com.C200.commands.Feed;
 import com.C200.commands.Heal;
 import com.C200.commands.gameMode;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.*;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Server;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoClients;
@@ -90,10 +95,19 @@ public class StartUp extends JavaPlugin {
 
         try{
             Bson projection = fields(include("name"), exclude("_id"));
-            col.find(query).projection(projection).forEach(doc ->
-                    System.out.println(doc.toJson()));
-            cursor.close();
+            col.find(query).projection(projection).forEach(document -> {
+                    JsonObject obj = new JsonParser().parse(document.toJson()).getAsJsonObject();
+                    String name = obj.get("name").getAsString();
+                    Player p = Bukkit.getServer().getPlayerExact(name);
 
+                    if(p != null) {
+                        p.sendMessage(ChatColor.RED + "(" + ChatColor.WHITE + "From Console" + ChatColor.RED + ")" + ChatColor.WHITE + " Permissions have been updated!");
+                    } else {
+                        System.out.println("Player is either offline or has never joined!");
+                    }
+
+            });
+            cursor.close();
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
@@ -109,7 +123,6 @@ public class StartUp extends JavaPlugin {
         display();
         return "true";
     }
-
 
 
 }
