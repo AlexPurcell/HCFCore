@@ -4,17 +4,17 @@ import ch.qos.logback.classic.LoggerContext;
 import com.C200.commands.Feed;
 import com.C200.commands.Heal;
 import com.C200.commands.gameMode;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.*;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoClients;
 
-import java.util.Arrays;
-import java.util.List;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -23,10 +23,8 @@ import ch.qos.logback.classic.Level;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.*;
 import static java.lang.Thread.sleep;
-import static java.util.Collections.singletonList;
 
 public class StartUp extends JavaPlugin {
 
@@ -88,7 +86,18 @@ public class StartUp extends JavaPlugin {
         assert next.getUpdateDescription() != null;
         System.out.println("Database has been updated! --> " + next.getUpdateDescription().getUpdatedFields());
 
-        cursor.close();
+        BasicDBObject query = new BasicDBObject();
+
+        try{
+            Bson projection = fields(include("name"), exclude("_id"));
+            col.find(query).projection(projection).forEach(doc ->
+                    System.out.println(doc.toJson()));
+            cursor.close();
+
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+
 
         try {
             sleep(1000);
