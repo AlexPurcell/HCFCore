@@ -24,7 +24,6 @@ public class gameMode implements CommandExecutor {
 
             LunarClientAPI.getInstance().sendPacket(player, new LCPacketTitle("SUBTITLE", "Creative", 3000, 2000, 1000));
 
-
             return true;
         }
         else if (command.getName().equalsIgnoreCase("gms")) {
