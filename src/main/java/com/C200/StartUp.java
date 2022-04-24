@@ -59,8 +59,6 @@ public class StartUp extends JavaPlugin {
         getCommand("gmspec").setExecutor(new gameMode());
         LoggerContext context = (LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory();
         (context).getLogger("org.mongodb.driver").setLevel(Level.ERROR);
-        display();
-
 
     }
 
@@ -84,6 +82,13 @@ public class StartUp extends JavaPlugin {
         MongoDatabase db = clientURI.getDatabase("Core");
         MongoCollection<Document> col = db.getCollection("permissionsNode");
 //        List<Bson> pipeline = singletonList(match(eq("operationType", "update")));
+
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+
+        }
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> cursor = col.watch().cursor();
 
         System.out.println("Watching stream");
@@ -94,10 +99,10 @@ public class StartUp extends JavaPlugin {
         BasicDBObject query = new BasicDBObject();
 
         try{
-            Bson projection = fields(include("name"), exclude("_id"));
+            Bson projection = fields(include("Name"), exclude("_id"));
             col.find(query).projection(projection).forEach(document -> {
                     JsonObject obj = new JsonParser().parse(document.toJson()).getAsJsonObject();
-                    String name = obj.get("name").getAsString();
+                    String name = obj.get("Name").getAsString();
                     Player p = Bukkit.getServer().getPlayerExact(name);
 
                     if(p != null) {
