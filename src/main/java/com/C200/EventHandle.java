@@ -2,6 +2,12 @@ package com.C200;
 
 import com.lunarclient.bukkitapi.LunarClientAPI;
 import com.lunarclient.bukkitapi.object.StaffModule;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,6 +16,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class EventHandle implements Listener {
 
@@ -41,5 +54,46 @@ public class EventHandle implements Listener {
 
         api.setStaffModuleState(player, StaffModule.XRAY, true);
 
+    }
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Dotenv dotenv = Dotenv.configure()
+                .directory("C:\\Users\\alext\\IdeaProjects\\Core\\src\\main\\assets")
+                .filename(".env")
+                .load();
+
+        String uri = dotenv.get("MY_ENV_VAR1");
+
+        assert uri != null;
+        MongoClient clientURI = MongoClients.create(uri);
+        Player p = event.getPlayer();
+        if(!(p.hasPlayedBefore())) {
+            MongoDatabase db = clientURI.getDatabase("Core");
+            MongoCollection<Document> col = db.getCollection("permissionsNode");
+            String playername = event.getPlayer().getName();
+            String uuid = event.getPlayer().getUniqueId().toString();
+
+            Document CS1 = new Document("Name", playername)
+                    .append("UUID", uuid);
+
+            List<String> permissionList = new ArrayList<>();
+            for (PermissionAttachmentInfo attachment : p.getEffectivePermissions()) {
+                permissionList.add(attachment.getPermission());
+            }
+            CS1.append("Permissions", permissionList);
+
+            // CS = Constructor
+
+            col.insertOne(CS1);
+
+            ExecutorService threadPool = Executors.newCachedThreadPool();
+            Future<String> futureTask = threadPool.submit(StartUp::doUpdates);
+
+            if (futureTask.isDone()) {
+                System.out.println("Database Updated!");
+            } else {
+                System.out.println("Searching for Updates..");
+            }
+        }
     }
 }
