@@ -8,12 +8,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -86,14 +87,24 @@ public class EventHandle implements Listener {
 
             col.insertOne(CS1);
 
-            ExecutorService threadPool = Executors.newCachedThreadPool();
-            Future<String> futureTask = threadPool.submit(StartUp::doUpdates);
+        }
 
-            if (futureTask.isDone()) {
-                System.out.println("Database Updated!");
-            } else {
-                System.out.println("Searching for Updates..");
-            }
+        ExecutorService threadPool = Executors.newSingleThreadExecutor();
+        Future<String> futureTask = threadPool.submit(StartUp::doUpdates);
+
+        if (futureTask.isDone()) {
+            System.out.println("Database Updated!");
+        } else {
+            System.out.println("Searching for Updates..");
+        }
+    }
+
+    @EventHandler
+    public void enderPearls(ProjectileHitEvent event) {
+        World world = Bukkit.getServer().getWorld("world");
+        if(event.getEntityType().equals(EntityType.ENDER_PEARL) & event.getEntity().isDead()) {
+            Location location = event.getEntity().getLocation();
+            System.out.println(location);
         }
     }
 }

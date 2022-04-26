@@ -11,15 +11,16 @@ import com.mongodb.client.*;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoClients;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -59,7 +60,6 @@ public class StartUp extends JavaPlugin {
         getCommand("gmspec").setExecutor(new gameMode());
         LoggerContext context = (LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory();
         (context).getLogger("org.mongodb.driver").setLevel(Level.ERROR);
-
     }
 
     @Override
@@ -94,7 +94,7 @@ public class StartUp extends JavaPlugin {
         System.out.println("Watching stream");
         ChangeStreamDocument<Document> next = cursor.next();
         assert next.getUpdateDescription() != null;
-        System.out.println("Database has been updated! --> " + next.getUpdateDescription().getUpdatedFields());
+        System.out.println("Database has been updated! --> " + next.getUpdateDescription());
 
         BasicDBObject query = new BasicDBObject();
 
@@ -104,12 +104,33 @@ public class StartUp extends JavaPlugin {
                     JsonObject obj = new JsonParser().parse(document.toJson()).getAsJsonObject();
                     String name = obj.get("Name").getAsString();
                     Player p = Bukkit.getServer().getPlayerExact(name);
+            List<String> listOfUpdates = new ArrayList<>();
+            var updatedID = next.getDocumentKey();
+            assert updatedID != null;
+            var newDoc = col.find(updatedID);
+            JsonObject myNewObj = new JsonParser().parse(newDoc.toString()).getAsJsonObject();
+            String getUpdatedname = myNewObj.get("Name").getAsString();
 
-                    if(p != null) {
-                        p.sendMessage(ChatColor.RED + "(" + ChatColor.WHITE + "From Console" + ChatColor.RED + ")" + ChatColor.WHITE + " Permissions have been updated!");
-                    } else {
-                        System.out.println("Player is either offline or has never joined!");
+
+             listOfUpdates.add(getUpdatedname);
+             for (int i = 0; i < listOfUpdates.size(); i++) {
+                  if (listOfUpdates.get(i).toString().equals(p.getName())) {
+                        System.out.println("true");
+                  } else {
+                      System.out.println("false");
+                      System.out.println(listOfUpdates);
                     }
+
+                        //parse array to string and see if any object is equal to player name
+           }
+
+
+
+//                if(p != null) {
+//                    p.sendMessage(ChatColor.RED + "(" + ChatColor.WHITE + "From Console" + ChatColor.RED + ")" + ChatColor.WHITE + " Permissions have been updated!");
+//                } else {
+//                    System.out.println("Player is either offline or has never joined!");
+//                }
 
             });
             cursor.close();
